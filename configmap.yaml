@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ethereum-config
+  namespace: default
+data:
+  network: "mainnet"
+  log_level: "info"
+  max_peers: "50"
+  jwt_secret_path: "/secrets/jwt.hex"
