@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: lighthouse
+  namespace: ethereum
+spec:
+  serviceName: lighthouse
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lighthouse
+  template:
+    metadata:
+      labels:
+        app: lighthouse
+    spec:
+      containers:
+      - name: lighthouse
+        image: sigp/lighthouse:latest
+        command:
+        - lighthouse
+        - bn
+        - --network=mainnet
+        - --execution-endpoint=http://nethermind:8551
+        - --execution-jwt=/secrets/jwt.hex
+        - --checkpoint-sync-url=https://mainnet.checkpoint.sigp.io
+        - --http
+        - --http-address=0.0.0.0
+        - --http-port=5052
+        - --metrics
+        - --metrics-address=0.0.0.0
+        - --metrics-port=5054
+        ports:
+        - containerPort: 5052
+          name: http
+        - containerPort: 5054
+          name: metrics
+        - containerPort: 9000
+          name: p2p
+        volumeMounts:
+        - name: beacon-data
+          mountPath: /data
+        - name: jwt
+          mountPath: /secrets
+          readOnly: true
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+      volumes:
+      - name: jwt
+        secret:
+          secretName: jwt-secret
+  volumeClaimTemplates:
+  - metadata:
+      name: beacon-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lighthouse
+  namespace: ethereum
+spec:
+  selector:
+    app: lighthouse
+  ports:
+  - port: 5052
+    name: http
+  - port: 5054
+    name: metrics
+  - port: 9000
+    name: p2p

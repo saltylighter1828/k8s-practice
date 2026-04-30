@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ethereum-config
+  namespace: ethereum
+data:
+  # Nethermind settings
+  NETHERMIND_NETWORK: "mainnet"
+  NETHERMIND_JSONRPC_ENABLED: "true"
+  NETHERMIND_JSONRPC_HOST: "0.0.0.0"
+  NETHERMIND_JSONRPC_PORT: "8545"
+  NETHERMIND_JSONRPC_ENGINEHOST: "0.0.0.0"
+  NETHERMIND_JSONRPC_ENGINEPORT: "8551"
+  NETHERMIND_SYNC_FASTSYNC: "true"
+  
+  # Lighthouse settings
+  LIGHTHOUSE_NETWORK: "mainnet"
+  LIGHTHOUSE_CHECKPOINT_SYNC: "https://mainnet.checkpoint.sigp.io"
+  LIGHTHOUSE_EXECUTION_ENDPOINT: "http://nethermind:8551"
