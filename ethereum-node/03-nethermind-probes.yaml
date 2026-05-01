@@ -36,6 +36,21 @@ spec:
         - name: jwt
           mountPath: /secrets
           readOnly: true
+
+        livenessProbe:
+          tcpSocket:
+            port: 30303
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          failureThreshold: 3
+
+        readinessProbe:
+          tcpSocket:
+            port: 30303
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 3
+
         resources:
           requests:
             memory: "512Mi"
