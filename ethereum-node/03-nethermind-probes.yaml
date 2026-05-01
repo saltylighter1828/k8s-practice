@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nethermind
+  namespace: ethereum
+spec:
+  serviceName: nethermind
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nethermind
+  template:
+    metadata:
+      labels:
+        app: nethermind
+    spec:
+      containers:
+      - name: nethermind
+        image: nethermind/nethermind:latest
+        ports:
+        - containerPort: 8545
+          name: rpc
+        - containerPort: 8551
+          name: engine
+        - containerPort: 30303
+          name: p2p
+        envFrom:
+        - configMapRef:
+            name: ethereum-config
+        env:
+        - name: NETHERMIND_JSONRPC_JWTSECRETFILE
+          value: "/secrets/jwt.hex"
+        volumeMounts:
+        - name: chain-data
+          mountPath: /data
+        - name: jwt
+          mountPath: /secrets
+          readOnly: true
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+      volumes:
+      - name: jwt
+        secret:
+          secretName: jwt-secret
+  volumeClaimTemplates:
+  - metadata:
+      name: chain-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nethermind
+  namespace: ethereum
+spec:
+  selector:
+    app: nethermind
+  ports:
+  - port: 8545
+    name: rpc
+  - port: 8551
+    name: engine
+  - port: 30303
+    name: p2p
