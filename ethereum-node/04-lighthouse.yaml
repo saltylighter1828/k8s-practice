@@ -62,11 +62,11 @@ spec:
           readOnly: true
         resources:
           requests:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "800Mi"
+            cpu: "750m"
           limits:
-            memory: "4Gi"
-            cpu: "2000m"
+            memory: "6Gi"
+            cpu: "4000m"
       volumes:
       - name: jwt
         secret:
