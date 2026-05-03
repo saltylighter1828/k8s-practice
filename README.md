@@ -36,6 +36,7 @@ limitations, and interdependent service startup ordering.
 
 ## Structure
 
+```
 k8s-practice/
 ├── configmap.yaml
 ├── ingress.yaml
@@ -44,11 +45,12 @@ k8s-practice/
 ├── secret.yaml
 ├── statefulset.yaml
 └── ethereum-node/
-├── 00-namespace.yaml
-├── 01-secret.yaml
-├── 02-configmap.yaml
-├── 03-nethermind.yaml
-└── 04-lighthouse.yaml
+    ├── 00-namespace.yaml
+    ├── 01-secret.yaml
+    ├── 02-configmap.yaml
+    ├── 03-nethermind.yaml
+    └── 04-lighthouse.yaml
+```
 
 ## Environment
 
