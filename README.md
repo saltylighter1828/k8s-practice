@@ -16,6 +16,8 @@ Part of a DevOps/blockchain infrastructure learning path.
 - **Helm** — deploying complex stacks with one command
 - **Liveness & Readiness Probes** — real-world health check debugging
 - **Resource Limits** — CPU/memory requests and limits tuning
+- **CI/CD** — GitHub Actions automated YAML validation pipeline
+- **Multi-network** — Mainnet + Sepolia testnet node deployments
 
 ## Key concepts demonstrated
 
@@ -27,6 +29,10 @@ pod deletion and rescheduling.
 paired with Lighthouse consensus client, JWT authentication between
 clients, ConfigMap-injected configuration, and persistent storage via PVCs.
 
+**Sepolia testnet node** — Live Nethermind snap sync + Lighthouse
+checkpoint sync running on Kubernetes. Debugged real errors including
+wrong config filename and dead checkpoint URLs.
+
 **Helm-deployed Prometheus + Grafana** — full monitoring stack deployed
 with one command, pre-built Kubernetes dashboards included.
 
@@ -35,7 +41,6 @@ WSL2 mount restrictions, localhost-only binding, minimal container
 limitations, and interdependent service startup ordering.
 
 ## Structure
-
 ```
 k8s-practice/
 ├── configmap.yaml
@@ -44,12 +49,17 @@ k8s-practice/
 ├── pod-with-config.yaml
 ├── secret.yaml
 ├── statefulset.yaml
-└── ethereum-node/
-    ├── 00-namespace.yaml
-    ├── 01-secret.yaml
-    ├── 02-configmap.yaml
-    ├── 03-nethermind.yaml
-    └── 04-lighthouse.yaml
+├── ethereum-node/
+│   ├── 00-namespace.yaml
+│   ├── 01-secret.yaml
+│   ├── 02-configmap.yaml
+│   ├── 03-nethermind.yaml
+│   └── 04-lighthouse.yaml
+└── sepolia-node/
+├── 00-namespace.yaml
+├── 01-secret.yaml
+├── 02-nethermind.yaml
+└── 03-lighthouse.yaml
 ```
 
 ## Environment
@@ -58,9 +68,11 @@ k8s-practice/
 - Local-path storage provisioner
 - Traefik ingress controller (k3s default)
 - Helm v3.20.2
+- GitHub Actions CI/CD
 
-## Next steps
+## Completed
 
-- Terraform integration (provision Hetzner VPS for k3s)
-- CI/CD pipeline with GitHub Actions
-- CKA exam preparation
+- ✅ Terraform integration (Hetzner Cloud provider)
+- ✅ CI/CD pipeline with GitHub Actions
+- ✅ Sepolia testnet node live and syncing
+- ✅ CKA exam preparation in progress
