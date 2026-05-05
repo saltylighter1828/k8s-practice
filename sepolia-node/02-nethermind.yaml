@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nethermind
+  namespace: holesky
+spec:
+  serviceName: nethermind
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nethermind
+  template:
+    metadata:
+      labels:
+        app: nethermind
+    spec:
+      containers:
+      - name: nethermind
+        image: nethermind/nethermind:latest
+        args:
+        - --config=sepolia.json
+        - --datadir=/data
+        - --JsonRpc.Enabled=true
+        - --JsonRpc.Host=0.0.0.0
+        - --JsonRpc.Port=8545
+        - --JsonRpc.EngineHost=0.0.0.0
+        - --JsonRpc.EnginePort=8551
+        - --JsonRpc.JwtSecretFile=/secrets/jwt.hex
+        - --Sync.SnapSync=true
+        ports:
+        - containerPort: 8545
+          name: rpc
+        - containerPort: 8551
+          name: engine
+        - containerPort: 30303
+          name: p2p
+        volumeMounts:
+        - name: chain-data
+          mountPath: /data
+        - name: jwt
+          mountPath: /secrets
+          readOnly: true
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        livenessProbe:
+          tcpSocket:
+            port: 30303
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          failureThreshold: 3
+        readinessProbe:
+          tcpSocket:
+            port: 30303
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 3
+      volumes:
+      - name: jwt
+        secret:
+          secretName: jwt-secret
+  volumeClaimTemplates:
+  - metadata:
+      name: chain-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nethermind
+  namespace: holesky
+spec:
+  selector:
+    app: nethermind
+  ports:
+  - port: 8545
+    name: rpc
+  - port: 8551
+    name: engine
+  - port: 30303
+    name: p2p
